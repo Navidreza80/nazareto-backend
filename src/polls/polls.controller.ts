@@ -37,11 +37,10 @@ export class PollsController {
         return this.pollsService.getAllPolls();
     }
 
-    @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('access-token')
     @Get(':id')
     getPoll(@Param('id') id: string, @Req() req) {
-        const userId = req.user.userId;
+        const userId = req.user?.userId;
         return this.pollsService.getPollById(+id, userId);
     }
 
