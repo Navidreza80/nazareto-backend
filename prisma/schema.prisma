@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int       @id @default(autoincrement()) 
+  username   String                    
+  email      String    @unique                       
+  password   String                           
+  createdAt  DateTime  @default(now())      
+  updatedAt  DateTime  @updatedAt                 
+  role       Role      @default(USER) 
+  polls      Poll[]    @relation("PollCreator")
+  votes      Vote[]         
+}
+
+model Poll {
+  id          Int        @id @default(autoincrement())
+  question    String
+  createdAt   DateTime   @default(now())
+  expiresAt   DateTime?
+  isActive    Boolean    @default(true)
+
+  createdBy   User       @relation("PollCreator", fields: [createdById], references: [id])
+  createdById Int
+  totalVotes  Int       @default(0)
+
+  options     Option[]
+  votes       Vote[]
+}
+
+model Option {
+  id       Int      @id @default(autoincrement())
+  text     String
+
+  poll     Poll     @relation(fields: [pollId], references: [id])
+  pollId   Int
+
+  totalVotes  Int       @default(0)
+  votes    Vote[]
+}
+
+model Vote {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+
+  option    Option   @relation(fields: [optionId], references: [id])
+  optionId  Int
+
+  poll      Poll     @relation(fields: [pollId], references: [id])
+  pollId    Int
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, pollId]) 
+}
+
+enum Role {
+  USER
+  ADMIN
+}
