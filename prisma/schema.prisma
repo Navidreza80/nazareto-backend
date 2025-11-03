@@ -28,7 +28,7 @@ model Poll {
   expiresAt   DateTime?
   isActive    Boolean    @default(true)
 
-  createdBy   User       @relation("PollCreator", fields: [createdById], references: [id])
+  createdBy   User       @relation("PollCreator", fields: [createdById], references: [id], onDelete: Cascade)
   createdById Int
   totalVotes  Int       @default(0)
 
@@ -40,7 +40,7 @@ model Option {
   id       Int      @id @default(autoincrement())
   text     String
 
-  poll     Poll     @relation(fields: [pollId], references: [id])
+  poll     Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
   pollId   Int
 
   totalVotes  Int       @default(0)
@@ -49,13 +49,13 @@ model Option {
 
 model Vote {
   id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
 
-  option    Option   @relation(fields: [optionId], references: [id])
+  option    Option   @relation(fields: [optionId], references: [id], onDelete: Cascade)
   optionId  Int
 
-  poll      Poll     @relation(fields: [pollId], references: [id])
+  poll      Poll     @relation(fields: [pollId], references: [id], onDelete: Cascade)
   pollId    Int
 
   createdAt DateTime @default(now())
