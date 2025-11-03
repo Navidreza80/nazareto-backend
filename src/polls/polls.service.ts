@@ -8,7 +8,10 @@ import { VoteDto } from './dtos/vote.dto';
 export class PollsService {
   constructor(private prisma: PrismaService) { }
 
-  async createPoll(adminId: number, dto: CreatePollDto) {
+  async createPoll(adminId: number, dto: CreatePollDto, role) {
+    if (role !== "ADMIN") {
+      return new ForbiddenException("You're not authorized to create poll")
+    }
     return this.prisma.poll.create({
       data: {
         question: dto.question,
@@ -30,7 +33,6 @@ export class PollsService {
   }
 
   async getPollById(pollId: number, userId?: number) {
-    console.log("userId", userId)
     const poll = await this.prisma.poll.findUnique({
       where: { id: pollId },
       include: { options: true },
@@ -45,8 +47,6 @@ export class PollsService {
         include: { option: true },
         where: { userId_pollId: { userId, pollId } }
       });
-      console.log(vote)
-
       if (vote) {
         userVote = { optionId: vote.option.id, text: vote.option.text };
       }

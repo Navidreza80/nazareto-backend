@@ -16,7 +16,7 @@ export class PollsController {
     @ApiBearerAuth('access-token')
     @Post()
     createPoll(@Req() req, @Body() dto: CreatePollDto) {
-        return this.pollsService.createPoll(req.user.userId, dto);
+        return this.pollsService.createPoll(req.user.userId, dto, req.user.role);
     }
 
     @UseGuards(JwtAuthGuard)
