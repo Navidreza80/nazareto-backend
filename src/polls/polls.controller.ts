@@ -1,10 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/gards/jwt-auth.gaurd';
+import { JwtAuthGuard } from 'src/auth/gaurds/jwt-auth.gaurd';
 import { CreatePollDto } from './dtos/create-poll.dto';
 import { UpdatePollDto } from './dtos/update-poll.dto';
 import { VoteDto } from './dtos/vote.dto';
 import { PollsService } from './polls.service';
+import { OptionalJwtAuthGuard } from 'src/auth/gaurds/optional-auth.gaurd';
 
 @ApiTags('Polls')
 @Controller('polls')
@@ -37,9 +38,11 @@ export class PollsController {
         return this.pollsService.getAllPolls();
     }
 
+    @UseGuards(OptionalJwtAuthGuard)
     @ApiBearerAuth('access-token')
     @Get(':id')
     getPoll(@Param('id') id: string, @Req() req) {
+        console.log(req.user)
         const userId = req.user?.userId;
         return this.pollsService.getPollById(+id, userId);
     }

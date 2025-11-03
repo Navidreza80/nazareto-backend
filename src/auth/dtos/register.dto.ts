@@ -14,4 +14,8 @@ export class RegisterDto {
   @IsString()
   @MinLength(6)
   password: string;
+
+  @ApiProperty({ example: 'abfkjsldfhh8712' })
+  @IsString()
+  fingerprint: string;
 }

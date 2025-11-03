@@ -30,6 +30,7 @@ export class PollsService {
   }
 
   async getPollById(pollId: number, userId?: number) {
+    console.log("userId", userId)
     const poll = await this.prisma.poll.findUnique({
       where: { id: pollId },
       include: { options: true },
@@ -41,9 +42,10 @@ export class PollsService {
 
     if (userId) {
       const vote = await this.prisma.vote.findUnique({
-        where: { userId_pollId: { userId, pollId } },
         include: { option: true },
+        where: { userId_pollId: { userId, pollId } }
       });
+      console.log(vote)
 
       if (vote) {
         userVote = { optionId: vote.option.id, text: vote.option.text };
